@@ -1,0 +1,34 @@
+# Lowest-priority settings layer — overridden by `.env` and real
+# environment variables (see backend/app/config.py for the precedence
+# chain and settings_customise_sources). Every key below MUST be the
+# literal Settings field name; sections are purely organizational and
+# are flattened at load time (see _load_yaml_defaults / the Phase 1
+# regression this guards against in backend/tests/test_config.py).
+
+app:
+  app_name: "SIEM Threat Detection Platform"
+  environment: "development"
+  debug: false
+
+splunk:
+  splunk_hec_url: "https://splunk:8088"
+  splunk_hec_index: "siem_threat_detection"
+  splunk_api_url: "https://splunk:8089"
+
+snort:
+  snort_alert_log_path: "/data/snort/log/alert"
+  snort_rules_path: "/data/snort/rules/local.rules"
+
+integration:
+  sync_interval_seconds: 60
+  sync_splunk_query: "search index=siem_threat_detection sourcetype=snort_alert_json"
+
+incidents:
+  correlation_default_threshold: 3
+  correlation_default_window_seconds: 300
+
+ml:
+  ml_model_dir: "/app/models"
+  ml_model_name: "isolation-forest-alert-features"
+  ml_contamination: 0.1
+  ml_min_training_samples: 20

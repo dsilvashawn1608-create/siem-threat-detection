@@ -1,0 +1,6 @@
+10/04-07:24:06.032802  [**] [1:1000001:1] ICMP Test Rule Triggered [**] [Classification: Potentially Bad Traffic] [Priority: 2] {ICMP} 10.0.0.5 -> 10.0.0.10
+10/04-07:24:06.033386  [**] [1:1000002:1] SSH Brute Force Attempt Pattern [**] [Classification: Attempted Information Leak] [Priority: 2] {TCP} 10.0.0.5:51012 -> 10.0.0.10:22
+10/04-07:24:06.033637  [**] [1:1000003:2] TCP SYN scan detected [**] [Classification: Attempted Information Leak] [Priority: 2] {TCP} 10.0.0.5:51234 -> 10.0.0.10:80
+10/04-07:24:06.033716  [**] [1:1000004:1] SMB Access Attempt [**] [Classification: Generic Protocol Command Decode] [Priority: 3] {TCP} 10.0.0.5:51300 -> 10.0.0.10:445
+10/04-07:24:06.033828  [**] [1:1000005:1] Suspicious DNS Query Volume [**] [Classification: Potentially Bad Traffic] [Priority: 3] {UDP} 10.0.0.5:51400 -> 10.0.0.10:53
+10/04-07:24:06.034006  [**] [1:1000006:1] Possible C2 Beacon Port [**] [Classification: A Network Trojan was detected] [Priority: 1] {TCP} 10.0.0.5:51500 -> 10.0.0.10:4444

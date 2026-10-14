@@ -1,0 +1,71 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      DEBUG: ${DEBUG:-false}
+      DATABASE_URL: sqlite:////data/backend/siem.db
+      CORS_ORIGINS: http://localhost:5173,http://localhost:3000
+      AUTH_SECRET_KEY: ${AUTH_SECRET_KEY:?Set AUTH_SECRET_KEY in .env}
+      AUTH_ADMIN_USERNAME: ${AUTH_ADMIN_USERNAME:?Set AUTH_ADMIN_USERNAME in .env}
+      AUTH_ADMIN_PASSWORD: ${AUTH_ADMIN_PASSWORD:?Set AUTH_ADMIN_PASSWORD in .env}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      SPLUNK_HEC_URL: https://splunk:8088
+      SPLUNK_API_URL: https://splunk:8089
+      SPLUNK_HEC_TOKEN: ${SPLUNK_HEC_TOKEN:?Set SPLUNK_HEC_TOKEN in .env}
+      SPLUNK_USERNAME: ${SPLUNK_USERNAME:-admin}
+      SPLUNK_PASSWORD: ${SPLUNK_PASSWORD:?Set SPLUNK_PASSWORD in .env}
+      SPLUNK_VERIFY_TLS: ${SPLUNK_VERIFY_TLS:-false}
+      SNORT_ALERT_LOG_PATH: /data/snort/log/alert
+      AUTO_SYNC_ENABLED: ${AUTO_SYNC_ENABLED:-false}
+      AUTO_CORRELATE_ENABLED: ${AUTO_CORRELATE_ENABLED:-false}
+      ML_SCORE_ON_INGEST_ENABLED: ${ML_SCORE_ON_INGEST_ENABLED:-false}
+    volumes:
+      - backend_data:/data/backend
+      - snort_data:/data/snort
+      - ./backend/models:/app/models
+    depends_on:
+      - splunk
+      - snort
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "127.0.0.1:5173:5173"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  splunk:
+    image: splunk/splunk:9.2
+    environment:
+      SPLUNK_START_ARGS: --accept-license
+      SPLUNK_PASSWORD: ${SPLUNK_PASSWORD:?Set SPLUNK_PASSWORD in .env}
+      SPLUNK_HEC_TOKEN: ${SPLUNK_HEC_TOKEN:?Set SPLUNK_HEC_TOKEN in .env}
+    ports:
+      - "127.0.0.1:8001:8000" # Splunk Web UI
+      - "127.0.0.1:8088:8088" # HEC
+      - "127.0.0.1:8089:8089" # management/REST API
+    volumes:
+      - splunk_data:/opt/splunk/var
+    restart: unless-stopped
+
+  snort:
+    build: ./snort
+    environment:
+      SNORT_MODE: ${SNORT_MODE:-pcap}
+      SNORT_REPLAY_INTERVAL_SECONDS: ${SNORT_REPLAY_INTERVAL_SECONDS:-120}
+    volumes:
+      - snort_data:/data/snort
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    restart: unless-stopped
+
+volumes:
+  backend_data:
+  snort_data:
+  splunk_data:

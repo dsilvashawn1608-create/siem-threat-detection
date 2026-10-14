@@ -1,0 +1,16 @@
+# Demo/lab detection rules for the SIEM Threat Detection Platform.
+# SIDs 1000001+ are reserved for locally-authored rules (per Snort convention).
+# These are intentionally broad/low-bar so the accompanying demo pcap
+# (snort/pcaps/demo-lab-traffic.pcap) reliably triggers each one end to end.
+
+alert icmp any any -> any any (msg:"ICMP Test Rule Triggered"; sid:1000001; rev:1; classtype:bad-unknown; priority:2;)
+
+alert tcp any any -> any 22 (msg:"SSH Brute Force Attempt Pattern"; flags:S; threshold:type threshold, track by_src, count 3, seconds 60; sid:1000002; rev:1; classtype:attempted-recon; priority:2;)
+
+alert tcp any any -> any 80 (msg:"TCP SYN scan detected"; flags:S; sid:1000003; rev:2; classtype:attempted-recon; priority:2;)
+
+alert tcp any any -> any 445 (msg:"SMB Access Attempt"; sid:1000004; rev:1; classtype:protocol-command-decode; priority:3;)
+
+alert udp any any -> any 53 (msg:"Suspicious DNS Query Volume"; sid:1000005; rev:1; classtype:bad-unknown; priority:3;)
+
+alert tcp any any -> any 4444 (msg:"Possible C2 Beacon Port"; sid:1000006; rev:1; classtype:trojan-activity; priority:1;)

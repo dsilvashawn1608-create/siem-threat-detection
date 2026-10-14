@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/setuptests.ts","./src/__tests__/app.test.tsx","./src/components/consolefield.tsx","./src/components/modal.tsx","./src/components/statusdot.tsx","./src/components/__tests__/consolefield.test.tsx","./src/components/__tests__/modal.test.tsx","./src/components/__tests__/statusdot.test.tsx"],"version":"5.9.3"}
