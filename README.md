@@ -76,6 +76,23 @@ network traffic. This demonstrates the SIEM workflow, not real sensor detection.
 
 ### Local dev (no Docker)
 
+For a backend-only development setup on Windows, from the repository root:
+
+```powershell
+Copy-Item .env.example .env # if .env does not already exist
+# Set AUTH_SECRET_KEY (at least 32 characters) and AUTH_ADMIN_PASSWORD
+# (at least 12 characters) in .env before starting the API.
+.\scripts\setup-backend.ps1
+.\scripts\dev-backend.ps1
+```
+
+The backend API is at http://localhost:8000 and its interactive docs are at
+http://localhost:8000/docs. This local setup uses `backend\siem.db`, regardless
+of the Docker database path in `.env`; Splunk/Snort auto-sync remain off unless
+enabled and configured.
+
+On Linux/macOS, or when setting up the full frontend and backend together:
+
 ```bash
 ./scripts/setup.sh   # creates backend venv, installs deps, runs migrations, npm install
 ./scripts/dev.sh      # runs uvicorn --reload + vite together

@@ -2,13 +2,42 @@
 
 ## Setup
 
+### Windows (backend only)
+
+From the repository root, create `.env` from `.env.example` if needed, then
+set `AUTH_SECRET_KEY` to a random value of at least 32 characters and
+`AUTH_ADMIN_PASSWORD` to a value of at least 12 characters. Keep `.env`
+private. Install Python 3.12 (the backend's pinned dependency/runtime
+version), then run:
+
+```powershell
+.\scripts\setup-backend.ps1
+.\scripts\dev-backend.ps1
+```
+
+The setup script creates `backend\.venv`, installs the pinned backend
+requirements, and applies Alembic migrations to the local `backend\siem.db`.
+The development script starts Uvicorn at `http://localhost:8000`; Swagger UI
+is at `http://localhost:8000/docs`. The backend loads the repository-root
+`.env` regardless of its working directory. Docker's `/data/backend/siem.db`
+path is overridden for local runs, so Docker and local development use
+separate databases.
+
+Run backend tests on Windows with:
+
+```powershell
+.\backend\.venv\Scripts\python.exe -m pytest -q .\backend\tests
+```
+
+### Linux/macOS (full local stack)
+
 ```bash
 ./scripts/setup.sh   # backend venv + deps + alembic upgrade head, npm install
 ./scripts/dev.sh      # uvicorn --reload (8000) + vite (5173) together
 ```
 
-See `docs/DEPLOYMENT.md` for the full environment-variable reference and
-the Docker Compose alternative.
+See `docs/DEPLOYMENT.md` for the full environment-variable reference and the
+Docker Compose alternative.
 
 ## Repo layout
 

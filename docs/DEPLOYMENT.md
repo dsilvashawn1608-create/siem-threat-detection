@@ -117,16 +117,43 @@ named-volume data.
 
 ## Option B: Local dev (no Docker)
 
+### Windows backend-only setup
+
+From the repository root, create `.env` from `.env.example` if it does not
+already exist. Set a private `AUTH_SECRET_KEY` (at least 32 characters) and
+`AUTH_ADMIN_PASSWORD` (at least 12 characters), install Python 3.12, then run:
+
+```powershell
+.\scripts\setup-backend.ps1
+.\scripts\dev-backend.ps1
+```
+
+This creates `backend\.venv`, installs `backend\requirements.txt`, applies
+database migrations to `backend\siem.db`, and starts the API at
+`http://localhost:8000`. Interactive API documentation is available at
+`http://localhost:8000/docs`. The local backend uses a separate SQLite file
+from the Docker Compose volume. Splunk/Snort integrations are not required to
+start the API; leave their auto-sync settings disabled unless those services
+are available.
+
+Run the backend tests with:
+
+```powershell
+.\backend\.venv\Scripts\python.exe -m pytest -q .\backend\tests
+```
+
+### Linux/macOS full local stack
+
 ```bash
 ./scripts/setup.sh   # backend venv + deps + alembic upgrade head, npm install
 ./scripts/dev.sh      # uvicorn --reload (8000) + vite (5173) together, Ctrl-C stops both
 ```
 
-This is the faster loop for backend/frontend iteration — no image
-rebuilds — but you're responsible for having a Splunk instance and a
-Snort alert log reachable yourself (or running with
-`AUTO_SYNC_ENABLED=false` and working purely through `POST
-/api/v1/alerts` / the dashboard's manual-create forms).
+These Bash scripts set up both backend and frontend. This is the faster loop
+for backend/frontend iteration — no image rebuilds — but you're responsible
+for having a Splunk instance and a Snort alert log reachable yourself (or
+running with `AUTO_SYNC_ENABLED=false` and working purely through
+`POST /api/v1/alerts` / the dashboard's manual-create forms).
 
 ## Configuration reference
 
